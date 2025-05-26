@@ -201,7 +201,7 @@ export class OrderService {
         throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
       }
 
-      const shippingCost = (25 * Number(order.totalPrice)) / 100;
+      // const shippingCost = (25 * Number(order.totalPrice)) / 100;
 
       // const topshipApiKey = this.config.get('TOPSHIP_API_KEY');
 
@@ -229,7 +229,7 @@ export class OrderService {
       const checkOutDetails = await this.prisma.order.update({
         where: { id: orderId },
         data: {
-          shippingCost: shippingCost,
+          shippingCost: 0,
         },
       });
 

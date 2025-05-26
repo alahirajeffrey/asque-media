@@ -17,11 +17,13 @@ export class SearchService {
 
   async searchArtwork(title: string) {
     try {
+      const artworks = await this.prisma.artWork.findMany({
+        where: { title: { contains: title, mode: 'insensitive' } },
+      });
+
       return {
         statusCode: HttpStatus.OK,
-        data: await this.prisma.artWork.findMany({
-          where: { title: { contains: title, mode: 'insensitive' } },
-        }),
+        data: artworks,
       };
     } catch (error) {
       this.logger.error(error);
@@ -34,11 +36,26 @@ export class SearchService {
 
   async searchAlbum(title: string) {
     try {
+      const albums = await this.prisma.album.findMany({
+        where: { title: { contains: title, mode: 'insensitive' } },
+        include: { albumChildren: { select: { albumImageUris: true } } },
+      });
+
+      const albumsWithImage = [];
+
+      for (const album of albums) {
+        const updatedAlbum = {
+          album,
+          albumImageUri: album.albumChildren[0].albumImageUris[0],
+        };
+
+        delete updatedAlbum.album.albumChildren;
+
+        albumsWithImage.push(updatedAlbum);
+      }
       return {
         statusCode: HttpStatus.OK,
-        data: await this.prisma.album.findMany({
-          where: { title: { contains: title, mode: 'insensitive' } },
-        }),
+        data: albumsWithImage,
       };
     } catch (error) {
       this.logger.error(error);
@@ -56,6 +73,25 @@ export class SearchService {
         data: await this.prisma.story.findMany({
           where: { title: { contains: title, mode: 'insensitive' } },
         }),
+      };
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException(
+        error.message,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async searchAdvert(title: string) {
+    try {
+      const adverts = await this.prisma.advert.findMany({
+        where: { title: { contains: title, mode: 'insensitive' } },
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        data: adverts,
       };
     } catch (error) {
       this.logger.error(error);

@@ -24,4 +24,10 @@ export class SearchController {
   searchStory(@Param('title') title: string) {
     return this.searchService.searchStory(title);
   }
+
+  @Get('advert/:title')
+  @ApiOperation({ summary: 'Search for adverts via title ' })
+  searchAdvert(@Param('title') title: string) {
+    return this.searchService.searchAdvert(title);
+  }
 }

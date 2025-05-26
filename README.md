@@ -23,6 +23,9 @@ $ npm install
 # start dev database
 $ docker compose up -d
 
+## run migrations
+$ npm run migrate:dev
+
 # development mode
 $ npm run start:dev
 
